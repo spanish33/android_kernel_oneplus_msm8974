@@ -28,7 +28,7 @@ config WAKELOCK
 
 config POWERSUSPEND
 	bool "Power suspend"
-	default n
+	default y
 	---help---
 	  Call early suspend handlers when the user requested sleep state
 	  changes.
