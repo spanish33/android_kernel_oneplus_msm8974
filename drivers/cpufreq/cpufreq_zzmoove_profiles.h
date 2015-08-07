@@ -2155,6 +2155,161 @@ struct zzmoove_profile zzmoove_profiles[] = {
 #endif /* defined(CONFIG_HAS_EARLYSUSPEND)... */
 	},
 	{
+		12,
+		"dfopt",		// DespairFactor Optimized Battery Profile (please don't remove this profile)
+		0,		// auto_adjust_freq_thresholds
+#ifdef ENABLE_HOTPLUGGING
+		1,		// disable_hotplug
+#if defined(CONFIG_HAS_EARLYSUSPEND) || defined(CONFIG_POWERSUSPEND) || defined(USE_LCD_NOTIFIER)
+		1,		// disable_hotplug_sleep
+#endif
+#endif
+		45,		// down_threshold
+#ifdef ENABLE_HOTPLUGGING
+		50,		// down_threshold_hotplug1
+#if (MAX_CORES == 4 || MAX_CORES == 8)
+		65,		// down_threshold_hotplug2
+		75,		// down_threshold_hotplug3
+		55,		// down_threshold_hotplug4
+#endif
+#if (MAX_CORES == 8)
+		55,		// down_threshold_hotplug5
+		55,		// down_threshold_hotplug6
+		55,		// down_threshold_hotplug7
+#endif
+		422400,		// down_threshold_hotplug_freq1
+#if (MAX_CORES == 4 || MAX_CORES == 8)
+		1190400,	// down_threshold_hotplug_freq2
+		1728000,	// down_threshold_hotplug_freq3
+		0,		// down_threshold_hotplug_freq4
+#endif
+#if (MAX_CORES == 8)
+		0,		// down_threshold_hotplug_freq5
+		0,		// down_threshold_hotplug_freq6
+		0,		// down_threshold_hotplug_freq7
+#endif
+#endif
+#if defined(CONFIG_HAS_EARLYSUSPEND) || defined(CONFIG_POWERSUSPEND) || defined(USE_LCD_NOTIFIER)
+		65,		// down_threshold_sleep
+#endif
+		1,		// early_demand
+#if defined(CONFIG_HAS_EARLYSUSPEND) || defined(CONFIG_POWERSUSPEND) || defined(USE_LCD_NOTIFIER)
+		1,		// early_demand_sleep
+#endif
+		5,		// fast_scaling_up
+		2,		// fast_scaling_down
+#if defined(CONFIG_HAS_EARLYSUSPEND) || defined(CONFIG_POWERSUSPEND) || defined(USE_LCD_NOTIFIER)
+		1,		// fast_scaling_sleep_up
+		0,		// fast_scaling_sleep_down
+#endif
+		30,		// afs_threshold1
+		50,		// afs_threshold2
+		70,		// afs_threshold3
+		90,		// afs_threshold4
+		0,		// freq_limit
+#if defined(CONFIG_HAS_EARLYSUSPEND) || defined(CONFIG_POWERSUSPEND) || defined(USE_LCD_NOTIFIER)
+		729600,		// freq_limit_sleep
+#endif
+		40,		// grad_up_threshold
+#if defined(CONFIG_HAS_EARLYSUSPEND) || defined(CONFIG_POWERSUSPEND) || defined(USE_LCD_NOTIFIER)
+		28,		// grad_up_threshold_sleep
+#endif
+#ifdef ENABLE_HOTPLUGGING
+		2,		// hotplug_block_up_cycles
+		1,		// block_up_multiplier_hotplug1
+		1,		// block_up_multiplier_hotplug2
+		1,		// block_up_multiplier_hotplug3
+		2,		// hotplug_block_down_cycles
+		1,		// block_down_multiplier_hotplug1
+		1,		// block_down_multiplier_hotplug2
+		1,		// block_down_multiplier_hotplug3
+		0,		// hotplug_stagger_up
+		0,		// hotplug_stagger_down
+		0,		// hotplug_idle_threshold
+		0,		// hotplug_idle_freq
+#if defined(CONFIG_HAS_EARLYSUSPEND) || defined(CONFIG_POWERSUSPEND) || defined(USE_LCD_NOTIFIER)
+		1,		// hotplug_sleep
+#endif
+		0,		// hotplug_engage_freq
+		0,		// hotplug_max_limit
+		0,		// hotplug_min_limit
+		0,		// hotplug_lock
+#endif
+		0,		// ignore_nice_load
+		3,		// sampling_down_factor
+		20,		// sampling_down_max_momentum
+		50,		// sampling_down_momentum_sensitivity
+		70000,		// sampling_rate
+		100000,		// sampling_rate_idle
+		0,		// sampling_rate_idle_delay
+		40,		// sampling_rate_idle_threshold
+#if defined(CONFIG_HAS_EARLYSUSPEND) || defined(CONFIG_POWERSUSPEND) || defined(USE_LCD_NOTIFIER)
+		6,		// sampling_rate_sleep_multiplier
+#endif
+		0,		// scaling_block_cycles
+#ifdef CONFIG_EXYNOS4_EXPORT_TEMP
+		0,		// scaling_block_temp
+#endif
+#ifdef ENABLE_SNAP_THERMAL_SUPPORT
+		0,		// scaling_trip_temp
+#endif
+		0,		// scaling_block_freq
+		0,		// scaling_block_threshold
+		2,		// scaling_block_force_down
+		0,		// scaling_fastdown_freq
+		95,		// scaling_fastdown_up_threshold
+		90,		// scaling_fastdown_down_threshold
+		652800,		// scaling_responsiveness_freq
+		0,		// scaling_responsiveness_up_threshold
+		0,		// scaling_proportional
+#ifdef ENABLE_INPUTBOOSTER
+		0,		// inputboost_cycles
+		80,		// inputboost_up_threshold
+		20,		// inputboost_punch_cycles
+		1728000,	// inputboost_punch_freq
+		1,		// inputboost_punch_on_fingerdown
+		0,		// inputboost_punch_on_fingermove
+		0,		// inputboost_punch_on_epenmove
+		40,		// inputboost_typingbooster_up_threshold
+		3,		// inputboost_typingbooster_cores
+#endif /* ENABLE_INPUTBOOSTER */
+		1497600,	// music_max_freq
+		422400,		// music_min_freq
+		2,		// music_min_cores
+		80,		// smooth_up
+#if defined(CONFIG_HAS_EARLYSUSPEND) || defined(CONFIG_POWERSUSPEND) || defined(USE_LCD_NOTIFIER)
+		99,		// smooth_up_sleep
+#endif
+		65,		// up_threshold
+#ifdef ENABLE_HOTPLUGGING
+		70,		// up_threshold_hotplug1
+#if (MAX_CORES == 4 || MAX_CORES == 8)
+		83,		// up_threshold_hotplug2
+		90,		// up_threshold_hotplug3
+		68,		// up_threshold_hotplug4
+#endif
+#if (MAX_CORES == 8)
+		68,		// up_threshold_hotplug5
+		68,		// up_threshold_hotplug6
+		68,		// up_threshold_hotplug7
+#endif
+		1036800,	// up_threshold_hotplug_freq1
+#if (MAX_CORES == 4 || MAX_CORES == 8)
+		1497600,	// up_threshold_hotplug_freq2
+		2265600,	// up_threshold_hotplug_freq3
+		0,		// up_threshold_hotplug_freq4
+#endif
+#if (MAX_CORES == 8)
+		0,		// up_threshold_hotplug_freq5
+		0,		// up_threshold_hotplug_freq6
+		0,		// up_threshold_hotplug_freq7
+#endif
+#endif
+#if defined(CONFIG_HAS_EARLYSUSPEND) || defined(CONFIG_POWERSUSPEND) || defined(USE_LCD_NOTIFIER)
+		95		// up_threshold_sleep
+#endif
+	},
+	{
 		PROFILE_TABLE_END,
 		END_OF_PROFILES,// End of table entry (DON'T REMOVE THIS PROFILE !!!)
 #ifdef ENABLE_AUTO_ADJUST_FREQ
