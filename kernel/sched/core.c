@@ -2885,6 +2885,9 @@ void update_idle_cpu_load(struct rq *this_rq)
  * Called from tick_nohz_idle_exit() -- try and fix up the ticks we missed.
  */
 void update_cpu_load_nohz(void)
+
+#ifdef CONFIG_CPUQUIET_FRAMEWORK
+u64 nr_running_integral(unsigned int cpu)
 {
 	struct rq *this_rq = this_rq();
 	unsigned long curr_jiffies = ACCESS_ONCE(jiffies);

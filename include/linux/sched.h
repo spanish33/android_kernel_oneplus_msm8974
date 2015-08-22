@@ -149,6 +149,8 @@ extern unsigned long this_cpu_load(void);
 #ifdef CONFIG_INTELLI_HOTPLUG
 extern unsigned long avg_nr_running(void);
 extern unsigned long avg_cpu_nr_running(unsigned int cpu);
+#ifdef CONFIG_CPUQUIET_FRAMEWORK
+extern u64 nr_running_integral(unsigned int cpu);
 #endif
 
 #if defined(CONFIG_MSM_DCVS)
