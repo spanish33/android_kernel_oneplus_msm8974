@@ -82,7 +82,7 @@ static unsigned long lowmem_deathpending_timeout;
 #define lowmem_print(level, x...)			\
 	do {						\
 		if (lowmem_debug_level >= (level))	\
-			pr_info(x);			2348ff0be5a62d7d71ae144f5d23077047186020\
+			pr_info(x);			\
 	} while (0)
 
 static atomic_t shift_adj = ATOMIC_INIT(0);
@@ -486,6 +486,7 @@ static int lowmem_shrink(struct shrinker *s, struct shrink_control *sc)
 	selected_oom_score_adj = min_score_adj;
 
 	rcu_read_lock();
+
 #ifdef CONFIG_ANDROID_LMK_ADJ_RBTREE
 	for (tsk = pick_first_task();
 		tsk != pick_last_task();
@@ -804,6 +805,7 @@ void delete_from_adj_tree(struct task_struct *task)
 	spin_unlock(&lmk_lock);
 }
 
+
 static struct task_struct *pick_next_from_adj_tree(struct task_struct *task)
 {
 	struct rb_node *next;
@@ -815,7 +817,7 @@ static struct task_struct *pick_next_from_adj_tree(struct task_struct *task)
 	if (!next)
 		return NULL;
 
-	return rb_entry(next, struct task_struct, adj_node);
+	 return rb_entry(next, struct task_struct, adj_node);
 }
 
 static struct task_struct *pick_first_task(void)
@@ -831,6 +833,7 @@ static struct task_struct *pick_first_task(void)
 
 	return rb_entry(left, struct task_struct, adj_node);
 }
+
 static struct task_struct *pick_last_task(void)
 {
 	struct rb_node *right;
@@ -845,7 +848,6 @@ static struct task_struct *pick_last_task(void)
 	return rb_entry(right, struct task_struct, adj_node);
 }
 #endif
-
 
 module_param_named(cost, lowmem_shrinker.seeks, int, S_IRUGO | S_IWUSR);
 #ifdef CONFIG_ANDROID_LOW_MEMORY_KILLER_AUTODETECT_OOM_ADJ_VALUES
