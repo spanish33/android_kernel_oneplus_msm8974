@@ -82,7 +82,7 @@
 #define MAX_CORES					(4)
 
 // ZZ: enable/disable hotplug support
-#define ENABLE_HOTPLUGGING
+//#define ENABLE_HOTPLUGGING
 
 // ZZ: enable support for native hotplugging on snapdragon platform
 #define SNAP_NATIVE_HOTPLUGGING
@@ -8427,11 +8427,13 @@ static void do_dbs_timer(struct work_struct *work)
 
 #ifdef ENABLE_SNAP_THERMAL_SUPPORT
 	if (dbs_tuners_ins.scaling_trip_temp > 0) {
-		if (!suspend_flag)
+		if (!suspend_flag) {
 			tmu_check_delay = DEF_TMU_CHECK_DELAY;
-		else
+		} else {
 			tmu_check_delay = DEF_TMU_CHECK_DELAY_SLEEP;
-		schedule_delayed_work(&work_tmu_check, msecs_to_jiffies(tmu_check_delay));
+			if (cpu == 0)								// ZZ: only start temp reading work if we are on core 0 to avoid re-scheduling on every gov reload during hotplugging
+				schedule_delayed_work(&work_tmu_check, msecs_to_jiffies(tmu_check_delay));
+		}
 	} else {
 		tt_reset();
 	}
@@ -8461,7 +8463,7 @@ static inline void dbs_timer_init(struct cpu_dbs_info_s *dbs_info)
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(3,7,0)
 	INIT_DEFERRABLE_WORK(&dbs_info->work, do_dbs_timer);
 #else
-	INIT_DELAYED_WORK_DEFERRABLE(&dbs_info->work, do_dbs_timer);
+	INIT_DEFERRABLE_WORK(&dbs_info->work, do_dbs_timer);
 #endif /* LINUX_VERSION_CODE... */
 	queue_delayed_work_on(dbs_info->cpu, dbs_wq, &dbs_info->work, delay);
 }
