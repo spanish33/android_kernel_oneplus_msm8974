@@ -65,7 +65,7 @@ static int lowmem_adj[6] = {
 	13,
 	15,
 };
-static int lowmem_adj_size = 6;
+static int lowmem_adj_size = 4;
 static int lowmem_minfree[6] = {
 	 3 *  512,	/* Foreground App: 	6 MB	*/
 	 2 * 1024,	/* Visible App: 	8 MB	*/
@@ -74,7 +74,7 @@ static int lowmem_minfree[6] = {
 	28 * 1024,	/* Content Provider: 	112 MB	*/
 	32 * 1024,	/* Empty App: 		128 MB	*/
 };
-static int lowmem_minfree_size = 6;
+static int lowmem_minfree_size = 4;
 static int lmk_fast_run = 1;
 
 static unsigned long lowmem_deathpending_timeout;
@@ -82,14 +82,14 @@ static unsigned long lowmem_deathpending_timeout;
 #define lowmem_print(level, x...)			\
 	do {						\
 		if (lowmem_debug_level >= (level))	\
-			pr_info(x);			\
+			pr_info(x);			2348ff0be5a62d7d71ae144f5d23077047186020\
 	} while (0)
 
 static atomic_t shift_adj = ATOMIC_INIT(0);
 static short adj_max_shift = 353;
 
 /* User knob to enable/disable adaptive lmk feature */
-static int enable_adaptive_lmk;
+static int enable_adaptive_lmk = 1;
 module_param_named(enable_adaptive_lmk, enable_adaptive_lmk, int,
 	S_IRUGO | S_IWUSR);
 
