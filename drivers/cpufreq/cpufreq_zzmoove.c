@@ -1358,7 +1358,7 @@ static int validate_min_max(int val, int min, int max)
 }
 
 // ZZ: system table scaling mode with freq search optimizations and proportional freq option
-static int zz_get_next_freq(unsigned int curfreq, unsigned int updown, unsigned int load)
+static inline int zz_get_next_freq(unsigned int curfreq, unsigned int updown, unsigned int load)
 {
 	int i = 0;
 	unsigned int prop_target = 0, zz_target = 0, dead_band_freq = 0;	// ZZ: proportional freq, system table freq, dead band freq
@@ -5244,7 +5244,6 @@ static ssize_t store_inputboost_typingbooster_up_threshold(struct kobject *a, st
 	return count;
 }
 
-#ifdef ENABLE_HOTPLUGGING
 // ff: added tuneable inputboost_typingbooster_cores -> possible values: range from 0 disabled to 4, if not set default is 0
 static ssize_t store_inputboost_typingbooster_cores(struct kobject *a, struct attribute *b,
 														   const char *buf, size_t count)
@@ -5271,7 +5270,6 @@ static ssize_t store_inputboost_typingbooster_cores(struct kobject *a, struct at
 	dbs_tuners_ins.inputboost_typingbooster_cores = input;
 	return count;
 }
-#endif /* ENABLE_HOTPLUGGING */
 #endif /* ENABLE_INPUTBOOSTER */
 
 #ifdef ENABLE_MUSIC_LIMITS
@@ -8427,13 +8425,11 @@ static void do_dbs_timer(struct work_struct *work)
 
 #ifdef ENABLE_SNAP_THERMAL_SUPPORT
 	if (dbs_tuners_ins.scaling_trip_temp > 0) {
-		if (!suspend_flag) {
+		if (!suspend_flag)
 			tmu_check_delay = DEF_TMU_CHECK_DELAY;
-		} else {
+		else
 			tmu_check_delay = DEF_TMU_CHECK_DELAY_SLEEP;
-			if (cpu == 0)								// ZZ: only start temp reading work if we are on core 0 to avoid re-scheduling on every gov reload during hotplugging
-				schedule_delayed_work(&work_tmu_check, msecs_to_jiffies(tmu_check_delay));
-		}
+		schedule_delayed_work(&work_tmu_check, msecs_to_jiffies(tmu_check_delay));
 	} else {
 		tt_reset();
 	}
@@ -8463,7 +8459,7 @@ static inline void dbs_timer_init(struct cpu_dbs_info_s *dbs_info)
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(3,7,0)
 	INIT_DEFERRABLE_WORK(&dbs_info->work, do_dbs_timer);
 #else
-	INIT_DEFERRABLE_WORK(&dbs_info->work, do_dbs_timer);
+	INIT_DELAYED_WORK_DEFERRABLE(&dbs_info->work, do_dbs_timer);
 #endif /* LINUX_VERSION_CODE... */
 	queue_delayed_work_on(dbs_info->cpu, dbs_wq, &dbs_info->work, delay);
 }
