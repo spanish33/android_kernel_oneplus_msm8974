@@ -29,6 +29,7 @@
 #define CREATE_TRACE_POINTS
 #include <trace/events/irq.h>
 
+#include <asm/irq.h>
 /*
    - No shared variables, all the data are CPU local.
    - If a softirq needs serialization, let it serialize itself
@@ -134,6 +135,7 @@ EXPORT_SYMBOL(local_bh_disable);
 
 static void __local_bh_enable(unsigned int cnt)
 {
+	WARN_ON_ONCE(in_irq());
 	WARN_ON_ONCE(!irqs_disabled());
 
 	if (softirq_count() == cnt)
@@ -148,7 +150,6 @@ static void __local_bh_enable(unsigned int cnt)
  */
 void _local_bh_enable(void)
 {
-	WARN_ON_ONCE(in_irq());
 	__local_bh_enable(SOFTIRQ_DISABLE_OFFSET);
 }
 
@@ -171,13 +172,8 @@ static inline void _local_bh_enable_ip(unsigned long ip)
  	 */
 	sub_preempt_count(SOFTIRQ_DISABLE_OFFSET - 1);
 
-	if (unlikely(!in_interrupt() && local_softirq_pending())) {
-		/*
-		 * Run softirq if any pending. And do it in its own stack
-		 * as we may be calling this deep in a task call stack already.
-		 */
+	if (unlikely(!in_interrupt() && local_softirq_pending()))
 		do_softirq();
-	}
 
 	dec_preempt_count();
 #ifdef CONFIG_TRACE_IRQFLAGS
@@ -278,10 +274,9 @@ restart:
 
 	account_system_vtime(current);
 	__local_bh_enable(SOFTIRQ_OFFSET);
-	WARN_ON_ONCE(in_interrupt());
 }
 
-
+#ifndef __ARCH_HAS_DO_SOFTIRQ
 
 asmlinkage void do_softirq(void)
 {
@@ -296,10 +291,12 @@ asmlinkage void do_softirq(void)
 	pending = local_softirq_pending();
 
 	if (pending)
-		do_softirq_own_stack();
+		__do_softirq();
 
 	local_irq_restore(flags);
 }
+
+#endif
 
 /*
  * Enter an interrupt context.
@@ -325,23 +322,16 @@ void irq_enter(void)
 static inline void invoke_softirq(void)
 {
 	if (!force_irqthreads) {
-#ifdef CONFIG_HAVE_IRQ_EXIT_ON_IRQ_STACK
-		/*
-		 * We can safely execute softirq on the current stack if
-		 * it is the irq stack, because it should be near empty
-		 * at this stage.
-		 */
+#ifdef __ARCH_IRQ_EXIT_IRQS_DISABLED
 		__do_softirq();
 #else
-		/*
-		 * Otherwise, irq_exit() is called on the task stack that can
-		 * be potentially deep already. So call softirq in its own stack
-		 * to prevent from any overrun.
-		 */
-		do_softirq_own_stack();
+		do_softirq();
 #endif
 	} else {
+		__local_bh_disable((unsigned long)__builtin_return_address(0),
+				SOFTIRQ_OFFSET);
 		wakeup_softirqd();
+		__local_bh_enable(SOFTIRQ_OFFSET);
 	}
 }
 
@@ -350,15 +340,9 @@ static inline void invoke_softirq(void)
  */
 void irq_exit(void)
 {
-#ifndef __ARCH_IRQ_EXIT_IRQS_DISABLED
-	local_irq_disable();
-#else
-	WARN_ON_ONCE(!irqs_disabled());
-#endif
-
 	account_system_vtime(current);
 	trace_hardirq_exit();
-	sub_preempt_count(HARDIRQ_OFFSET);
+	sub_preempt_count(IRQ_EXIT_OFFSET);
 	if (!in_interrupt() && local_softirq_pending())
 		invoke_softirq();
 
@@ -368,6 +352,7 @@ void irq_exit(void)
 		tick_nohz_irq_exit();
 #endif
 	rcu_irq_exit();
+	sched_preempt_enable_no_resched();
 }
 
 /*
@@ -766,10 +751,6 @@ static void run_ksoftirqd(unsigned int cpu)
 {
 	local_irq_disable();
 	if (local_softirq_pending()) {
-		/*
-		 * We can safely run softirq on inline stack, as we are not deep
-		 * in the task stack here.
-		 */
 		__do_softirq();
 		local_irq_enable();
 		cond_resched();
