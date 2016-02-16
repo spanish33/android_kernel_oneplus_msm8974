@@ -81,7 +81,7 @@ static int update_average_load(unsigned int freq, unsigned int cpu)
 	cur_load = 100 * (wall_time - idle_time) / wall_time;
 
 	/* Calculate the scaled load across CPU */
-	load_at_max_freq = (cur_load * policy.cur) / policy.max;
+	load_at_max_freq = (cur_load * freq) / pcpu->policy_max;
 
 	if (!pcpu->avg_load_maxfreq) {
 		/* This is the first sample in this window*/
@@ -263,16 +263,16 @@ static struct kobj_attribute hotplug_enabled_attr =
 unsigned int get_rq_info(void)
 {
 	unsigned long flags = 0;
-        unsigned int rq = 0;
+	unsigned int rq = 0;
 
-        spin_lock_irqsave(&rq_lock, flags);
+	spin_lock_irqsave(&rq_lock, flags);
 
-        rq = rq_info.rq_avg;
-        rq_info.rq_avg = 0;
+	rq = rq_info.rq_avg;
+	rq_info.rq_avg = 0;
 
-        spin_unlock_irqrestore(&rq_lock, flags);
+	spin_unlock_irqrestore(&rq_lock, flags);
 
-        return rq;
+	return rq;
 }
 EXPORT_SYMBOL(get_rq_info);
 #endif
