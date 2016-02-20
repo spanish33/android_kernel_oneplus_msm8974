@@ -49,7 +49,7 @@
 #define DEF_SAMPLING_RATE			(20000)
 
 #define DEF_SYNC_FREQUENCY			(960000)
-#define DEF_OPTIMAL_FREQUENCY			(1574400)
+#define DEF_OPTIMAL_FREQUENCY			(1497600)
 #define DEF_OPTIMAL_MAX_FREQ			(1728000)
 
 /* Kernel tunabble controls */
