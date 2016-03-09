@@ -16,12 +16,12 @@ DEFCONFIG="radioactive_defconfig"
 
 # Kernel Details
 BASE_RADIOACTIVE_VER="RADIOACTIVE_REBORN"
-VER="_ARCHITOOLCHAIN-5.1_TEST_V1"
+VER="_V2.15"
 RADIOACTIVE_VER="$BASE_RADIOACTIVE_VER$VER"
 
 # Vars
 export LOCALVERSION=~`echo $RADIOACTIVE_VER`
-export CROSS_COMPILE=${HOME}/Android/toolchains/architoolchain5.1/bin/arm-eabi-
+export CROSS_COMPILE=${HOME}/Android/toolchains/linaro4.9/bin/arm-eabi-
 export ARCH=arm
 export SUBARCH=arm
 export KBUILD_BUILD_USER=R.Cuenca
