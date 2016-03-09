@@ -37,6 +37,7 @@ obj-$(CONFIG_CPU_FREQ_GOV_DANCEDANCE)	+= cpufreq_dancedance.o
 obj-$(CONFIG_CPU_FREQ_GOV_WAVE)	        += cpufreq_wave.o
 obj-$(CONFIG_CPU_FREQ_GOV_DYNAMIC_INTERACTIVE) += cpufreq_dynamic_interactive.o
 obj-$(CONFIG_CPU_FREQ_GOV_INTERACTIVE_PRO) += cpufreq_interactive_pro.o
+obj-$(CONFIG_CPU_FREQ_GOV_LULZACTIVE)	+= cpufreq_lulzactive.o
 
 # CPUfreq cross-arch helpers
 obj-$(CONFIG_CPU_FREQ_TABLE)		+= freq_table.o
