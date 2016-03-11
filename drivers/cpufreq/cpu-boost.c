@@ -309,7 +309,7 @@ static int boost_migration_notify(struct notifier_block *nb,
 	unsigned long flags;
 	struct cpu_sync *s = &per_cpu(sync_info, dest_cpu);
 
-	if (!load_based_syncs && (mnd->src_cpu == mnd->dest_cpu))
+	if (suspended)
 		return NOTIFY_OK;
 
 	if (!boost_ms)
@@ -319,7 +319,7 @@ static int boost_migration_notify(struct notifier_block *nb,
 	if (s->thread == current)
 		return NOTIFY_OK;
 
-	pr_debug("Migration: CPU%d --> CPU%d\n", (int) arg, (int) dest_cpu);
+	pr_debug("Migration: CPU%d --> CPU%d\n", mnd->src_cpu, mnd->dest_cpu);
 	spin_lock_irqsave(&s->lock, flags);
 	s->pending = true;
 	s->src_cpu = (int) arg;
