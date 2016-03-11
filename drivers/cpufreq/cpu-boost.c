@@ -262,9 +262,11 @@ static int boost_mig_sync_thread(void *data)
 		if (ret)
 			continue;
 
-		if (src_policy.cur == src_policy.cpuinfo.min_freq) {
-			pr_debug("No sync. Source CPU%d@%dKHz at min freq\n",
-				 src_cpu, src_policy.cur);
+		req_freq = max((dest_policy.max * s->task_load) / 100,
+							src_policy.cur);
+
+		if (req_freq <= dest_policy.cpuinfo.min_freq) {
+			pr_debug("No sync. Sync Freq:%u\n", req_freq);
 			continue;
 		}
 
