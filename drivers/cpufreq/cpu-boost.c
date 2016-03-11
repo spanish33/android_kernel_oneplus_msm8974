@@ -262,11 +262,9 @@ static int boost_mig_sync_thread(void *data)
 		if (ret)
 			continue;
 
-		req_freq = max((dest_policy.max * s->task_load) / 100,
-							src_policy.cur);
-
-		if (req_freq <= dest_policy.cpuinfo.min_freq) {
-			pr_debug("No sync. Sync Freq:%u\n", req_freq);
+		if (src_policy.cur == src_policy.cpuinfo.min_freq) {
+			pr_debug("No sync. Source CPU%d@%dKHz at min freq\n",
+				 src_cpu, src_policy.cur);
 			continue;
 		}
 
@@ -321,7 +319,7 @@ static int boost_migration_notify(struct notifier_block *nb,
 	if (s->thread == current)
 		return NOTIFY_OK;
 
-	pr_debug("Migration: CPU%d --> CPU%d\n", mnd->src_cpu, mnd->dest_cpu);
+	pr_debug("Migration: CPU%d --> CPU%d\n", (int) arg, (int) dest_cpu);
 	spin_lock_irqsave(&s->lock, flags);
 	s->pending = true;
 	s->src_cpu = (int) arg;
