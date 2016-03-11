@@ -28,9 +28,7 @@
 
 #define ZEN_DECISION "zen_decision"
 
-/*
- * Enable/Disable driver
- */
+/* Enable/Disable driver */
 unsigned int enabled = 0;
 
 /*
@@ -45,7 +43,7 @@ unsigned int wake_wait_time = 1000;
  *
  * Setting to 0 will do CPU_UP work regardless of battery level.
  */
-unsigned int bat_threshold_ignore = 15;
+unsigned int bat_threshold_ignore = 0;
 
 /* FB Notifier */
 static struct notifier_block fb_notifier;
@@ -67,7 +65,7 @@ union power_supply_propval current_charge;
  * If we can't find the "battery" device, then we ignore all battery work, which means
  * we do the CPU_UP work regardless of the battery level.
  */
-const char ps_name[] = "battery";
+char ps_name[] = "battery";
 
 static int get_power_supply_level(void)
 {
@@ -348,3 +346,4 @@ MODULE_VERSION("2.0");
 MODULE_DESCRIPTION("Zen Decision - Kernel MSM Userspace Handler");
 MODULE_LICENSE("GPL v2");
 MODULE_AUTHOR("Brandon Berhent <bbedward@gmail.com>");
+
