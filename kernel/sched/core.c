@@ -1686,25 +1686,9 @@ stat:
 out:
 	raw_spin_unlock_irqrestore(&p->pi_lock, flags);
 
-	if (task_notify_on_migrate(p)) {
-		struct migration_notify_data mnd;
-
-		mnd.src_cpu = src_cpu;
-		mnd.dest_cpu = cpu;
-		mnd.load = pct_task_load(p);
-
-		/*
-		 * Call the migration notifier with mnd for foreground task
-		 * migrations as well as for wakeups if their load is above
-		 * sysctl_sched_wakeup_load_threshold. This would prompt the
-		 * cpu-boost to boost the CPU frequency on wake up of a heavy
-		 * weight foreground task
-		 */
-		if ((src_cpu != cpu) || (mnd.load >
-					sysctl_sched_wakeup_load_threshold))
-			atomic_notifier_call_chain(&migration_notifier_head,
-					   0, (void *)&mnd);
-	}
+	if (notify)
+		atomic_notifier_call_chain(&migration_notifier_head,
+					   cpu, (void *)src_cpu);
 	return success;
 }
 
