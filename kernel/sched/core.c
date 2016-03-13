@@ -1681,12 +1681,12 @@ try_to_wake_up(struct task_struct *p, unsigned int state, int wake_flags)
 stat:
 	ttwu_stat(p, cpu, wake_flags);
 
-	if (task_notify_on_migrate(p))
+	if (src_cpu != cpu && task_notify_on_migrate(p))
 		notify = 1;
 out:
 	raw_spin_unlock_irqrestore(&p->pi_lock, flags);
 
-	if (notify) {
+	if (task_notify_on_migrate(p)) {
 		struct migration_notify_data mnd;
 
 		mnd.src_cpu = src_cpu;
