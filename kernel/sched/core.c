@@ -2206,18 +2206,7 @@ unsigned long nr_iowait(void)
 	return sum;
 }
 
-unsigned long nr_iowait_cpu(int cpu)
-{
-	struct rq *this = cpu_rq(cpu);
-	return atomic_read(&this->nr_iowait);
-}
-
-unsigned long this_cpu_load(void)
-{
-	struct rq *this = this_rq();
-	return this->cpu_load[0];
-}
-
+#if defined(CONFIG_INTELLI_HOTPLUG) || defined(CONFIG_MSM_RUN_QUEUE_STATS_BE_CONSERVATIVE)
 unsigned long avg_nr_running(void)
 {
 	unsigned long i, sum = 0;
@@ -2270,20 +2259,19 @@ unsigned long avg_cpu_nr_running(unsigned int cpu)
 	return ave_nr_running;
 }
 EXPORT_SYMBOL(avg_cpu_nr_running);
+#endif
 
-
-unsigned long get_avg_nr_running(unsigned int cpu)
+unsigned long nr_iowait_cpu(int cpu)
 {
-	struct rq *q;
-
-	if (cpu >= nr_cpu_ids)
-		return 0;
-
-	q = cpu_rq(cpu);
-
-	return q->ave_nr_running;
+	struct rq *this = cpu_rq(cpu);
+	return atomic_read(&this->nr_iowait);
 }
-EXPORT_SYMBOL(get_avg_nr_running);
+
+unsigned long this_cpu_load(void)
+{
+	struct rq *this = this_rq();
+	return this->cpu_load[0];
+}
 
 
 /*
