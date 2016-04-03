@@ -19,7 +19,7 @@
 #ifndef __DRIVER_CPUQUIET_H
 #define __DRIVER_CPUQUIET_H
 
-#include <linux/device.h>
+#include <linux/sysdev.h>
 
 extern struct mutex cpuquiet_lock;
 extern struct cpuquiet_governor *cpuquiet_curr_governor;
