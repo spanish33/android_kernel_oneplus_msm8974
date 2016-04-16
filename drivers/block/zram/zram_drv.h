@@ -32,7 +32,7 @@ static const unsigned max_num_devices = 32;
  * Pages that compress to size greater than this are stored
  * uncompressed in memory.
  */
-static const size_t max_zpage_size = PAGE_SIZE / 10 * 9;
+static const size_t max_zpage_size = PAGE_SIZE / 4 * 3;
 
 /*
  * NOTE: max_zpage_size must be less than or equal to:
@@ -77,8 +77,9 @@ enum zram_pageflags {
 /* Allocated for each disk page */
 struct zram_table_entry {
 	unsigned long handle;
-	unsigned long value;
-};
+	u16 size;	/* object size (excluding header) */
+	u8 flags;
+} __aligned(4);
 
 struct zram_stats {
 	atomic64_t compr_data_size;	/* compressed size of pages stored */
@@ -93,7 +94,8 @@ struct zram_stats {
 };
 
 struct zram_meta {
-	struct zram_table_entry *table;
+	rwlock_t tb_lock;	/* protect table */
+	struct table *table;
 	struct zs_pool *mem_pool;
 };
 
