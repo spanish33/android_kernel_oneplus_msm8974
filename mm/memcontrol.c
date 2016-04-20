@@ -3587,8 +3587,10 @@ static int mem_cgroup_resize_limit(struct mem_cgroup *memcg,
 		}
 		mutex_unlock(&set_limit_mutex);
 
-		if (!ret)
+		if (!ret) {
+			vmpressure_update_mem_limit(memcg, val);
 			break;
+		}
 
 		mem_cgroup_reclaim(memcg, GFP_KERNEL,
 				   MEM_CGROUP_RECLAIM_SHRINK);
@@ -5137,7 +5139,7 @@ mem_cgroup_create(struct cgroup *cont)
 	memcg->move_charge_at_immigrate = 0;
 	mutex_init(&memcg->thresholds_lock);
 	spin_lock_init(&memcg->move_lock);
-	vmpressure_init(&memcg->vmpressure);
+	vmpressure_init(&memcg->vmpressure, cont->parent == NULL);
 	return &memcg->css;
 free_out:
 	__mem_cgroup_free(memcg);
@@ -5759,6 +5761,23 @@ static void mem_cgroup_move_task(struct cgroup *cont,
 }
 #endif
 
+static int mem_cgroup_allow_attach(struct cgroup *cgrp,
+				 struct cgroup_taskset *tset)
+{
+	const struct cred *cred = current_cred(), *tcred;
+	struct task_struct *task;
+
+	cgroup_taskset_for_each(task, cgrp, tset) {
+		tcred = __task_cred(task);
+
+		if ((current != task) && !capable(CAP_SYS_ADMIN) &&
+		    cred->euid != tcred->uid && cred->euid != tcred->suid)
+			return -EACCES;
+	}
+
+	return 0;
+}
+
 struct cgroup_subsys mem_cgroup_subsys = {
 	.name = "memory",
 	.subsys_id = mem_cgroup_subsys_id,
@@ -5769,6 +5788,7 @@ struct cgroup_subsys mem_cgroup_subsys = {
 	.can_attach = mem_cgroup_can_attach,
 	.cancel_attach = mem_cgroup_cancel_attach,
 	.attach = mem_cgroup_move_task,
+	.allow_attach = mem_cgroup_allow_attach,
 	.early_init = 0,
 	.use_id = 1,
 };
