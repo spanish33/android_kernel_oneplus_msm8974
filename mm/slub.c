@@ -3851,26 +3851,9 @@ struct kmem_cache *__kmem_cache_alias(const char *name, size_t size,
 	return s;
 }
 
-	s = kmalloc(kmem_size, GFP_KERNEL);
-	if (s) {
-		if (kmem_cache_open(s, n,
-				size, align, flags, ctor)) {
-			list_add(&s->list, &slab_caches);
-			up_write(&slub_lock);
-			if (sysfs_slab_add(s)) {
-				down_write(&slub_lock);
-				list_del(&s->list);
-				kfree(n);
-				kfree(s);
-				goto err;
-			}
-			return s;
-		}
-		kfree(s);
-	}
-	kfree(n);
-err:
-	up_write(&slub_lock);
+int __kmem_cache_create(struct kmem_cache *s, unsigned long flags)
+{
+	int err;
 
 	err = kmem_cache_open(s, flags);
 	if (err)
