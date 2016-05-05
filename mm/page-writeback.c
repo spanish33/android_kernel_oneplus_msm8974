@@ -276,8 +276,6 @@ unsigned long global_dirtyable_memory(void)
 	x = global_page_state(NR_FREE_PAGES);
 	x -= min(x, dirty_balance_reserve);
 
-	x += global_reclaimable_pages();
-
 	if (!vm_highmem_is_dirtyable)
 		x -= highmem_dirtyable_memory(x);
 
