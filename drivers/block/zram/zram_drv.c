@@ -38,10 +38,7 @@
 /* Globals */
 static int zram_major;
 static struct zram *zram_devices;
-<<<<<<< HEAD:drivers/staging/zram/zram_drv.c
-=======
 static const char *default_compressor = "lzo";
->>>>>>> 22bbd45... mm: Backport ZRAM/ZSMALLOC from Google kernel:drivers/block/zram/zram_drv.c
 
 /* Module params (documentation at end) */
 static unsigned int num_devices = 1;
@@ -467,13 +464,6 @@ static int zram_bvec_write(struct zram *zram, struct bio_vec *bvec, u32 index,
 		/* Free memory associated with this sector now. */
 		write_lock(&zram->meta->tb_lock);
 		zram_free_page(zram, index);
-<<<<<<< HEAD:drivers/staging/zram/zram_drv.c
-		zram_set_flag(meta, index, ZRAM_ZERO);
-		write_unlock(&zram->meta->tb_lock);
-
-		zram->stats.pages_zero++;
-=======
->>>>>>> 22bbd45... mm: Backport ZRAM/ZSMALLOC from Google kernel:drivers/block/zram/zram_drv.c
 		zram_set_flag(meta, index, ZRAM_ZERO);
 		write_unlock(&zram->meta->tb_lock);
 
@@ -813,18 +803,6 @@ static void zram_slot_free_notify(struct block_device *bdev,
 
 	zram = bdev->bd_disk->private_data;
 	meta = zram->meta;
-<<<<<<< HEAD:drivers/staging/zram/zram_drv.c
-
-	write_lock(&meta->tb_lock);
-	zram_free_page(zram, index);
-	write_unlock(&meta->tb_lock);
-	atomic64_inc(&zram->stats.notify_free);
-
-	free_rq = kmalloc(sizeof(struct zram_slot_free), GFP_ATOMIC);
-	if (!free_rq)
-		return;
-=======
->>>>>>> 22bbd45... mm: Backport ZRAM/ZSMALLOC from Google kernel:drivers/block/zram/zram_drv.c
 
 	write_lock(&meta->tb_lock);
 	zram_free_page(zram, index);
