@@ -385,8 +385,10 @@ KBUILD_CFLAGS   := -Wall -DNDEBUG -Wundef -Wstrict-prototypes -Wno-trigraphs \
 		   -mcpu=cortex-a15 -mtune=cortex-a15 -mfpu=neon-vfpv4 -marm \
 		   -ffast-math -fsingle-precision-constant \
 		   -fgcse-lm -fgcse-sm -fsched-spec-load -fforce-addr \
-		   -std=gnu89
-
+		   -Wno-bool-compare -Wno-logical-not-parentheses \
+		   -Wno-misleading-indentation -Wno-unused-const-variable \
+		   -Wno-tautological-compare -Wno-return-type -Wno-shift-overflow
+#  -std=gnu89
 KBUILD_AFLAGS_KERNEL :=
 KBUILD_CFLAGS_KERNEL := 
 KBUILD_AFLAGS   := -D__ASSEMBLY__
